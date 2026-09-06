@@ -4,5 +4,6 @@ using UnityEngine;
 
 public static class MainData
 {
+    public static float characterSkill_moveSpeed;
     public static float fightView_moveSpeed;
 }

@@ -27,6 +27,7 @@ public class SkillData : ScriptableObject
     public int accuracy;
     public float calledShotChance;
 
+    public Color32 skillBgColor;
     [TextArea] public string skillExplanation;
 
     [SerializeReference, SubclassSelector] public List<SkillEffect> effects;

@@ -8,6 +8,8 @@ public class InputManager : Manager<InputManager>
     public event Action OnPressingD;
     public event Action OnPressD;
     public event Action OnPressE;
+
+    public event Action OnPressSpace;
     public event Action OnPressTab;
 
     // Update is called once per frame
@@ -26,14 +28,18 @@ public class InputManager : Manager<InputManager>
         {
             OnPressA?.Invoke();
         }
-        if (Input.GetKeyUp(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D))
         {
             OnPressD?.Invoke();
         }
 
-        if (Input.GetKey(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             OnPressE?.Invoke();
+        }
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            OnPressSpace?.Invoke();
         }
 
         if (Input.GetKeyDown(KeyCode.Tab))

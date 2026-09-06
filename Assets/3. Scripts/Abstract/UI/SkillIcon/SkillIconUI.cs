@@ -6,9 +6,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SkillIcon_UI : MonoBehaviour
+public abstract class SkillIconUI : MonoBehaviour
 {
-    TargetContext context;
+    protected TargetContext context;
 
     [SerializeField] RectTransform rect;
     [SerializeField] CanvasGroup can;
@@ -19,32 +19,30 @@ public class SkillIcon_UI : MonoBehaviour
     [SerializeField] Color32 normalCol;
     [SerializeField] Color32 selectCol;
 
-    bool isclick;
-    static Action OnClicked;
+    protected bool isclick;
+    protected static Action OnClicked;
 
-    float animationSpeed;
+    protected float animationSpeed;
 
-    public void Initialize(TargetContext context, float duration)
+    public virtual void Initialize(TargetContext context, float duration)
     {
         this.context = context;
         animationSpeed = duration;
 
         OnClicked += RemoveEvent;
-        SkillManager.manager.OnSkillSelected += SetBlock;
         SkillManager.manager.OnSkillSelected += SetSelect;
 
         ContextSet();
         can.alpha = 0;
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         OnClicked -= RemoveEvent;
-        SkillManager.manager.OnSkillSelected -= SetBlock;
         SkillManager.manager.OnSkillSelected -= SetSelect;
     }
 
-    TargetContext GiveData()
+    protected TargetContext GiveData()
     {
         return context;
     }
@@ -70,7 +68,9 @@ public class SkillIcon_UI : MonoBehaviour
 
     public void SetMove()
     {
-        if(context.selected)
+        SkillManagerData skillData = GetData.skillM_Data.Invoke();
+
+        if (skillData.setSkillList[skillData.nowSelectedHero].nowSelectedContext == context)
         {
             rect.anchoredPosition = new Vector2(-50f, rect.anchoredPosition.y);
         }
@@ -107,8 +107,7 @@ public class SkillIcon_UI : MonoBehaviour
         {
             isclick = true;
 
-            GetData.nowSelectedSkill += GiveData;
-            SkillManager.manager.OnSkillFind?.Invoke();
+            SkillSet();
         }
         else
         {
@@ -116,24 +115,18 @@ public class SkillIcon_UI : MonoBehaviour
         }
     }
 
+    protected abstract void SkillSet();
+
     void SetColor(Color32 color)
     {
         bg.color = color;
-    }
+    } 
 
-    void SetBlock()
+    protected void SetSelect()
     {
-        SkillManagerData data = GetData.skillM_Data.Invoke();
+        SkillManagerData skillData = GetData.skillM_Data.Invoke();
 
-        if(data.lasetTargetContext.useSkill.skillType == SkillData.SkillType.Act && context.useSkill.skillType == SkillData.SkillType.Act)
-        {
-            SetDefault();
-        }
-    }
-
-    void SetSelect()
-    {
-        if (context.selected)
+        if (skillData.setSkillList[skillData.nowSelectedHero].nowSelectedContext == context)
         {
             isclick = true;
 
@@ -146,10 +139,13 @@ public class SkillIcon_UI : MonoBehaviour
         }
     }
 
-    void SetDefault()
+    protected void SetDefault()
     {
         TargetContext targetCon = new TargetContext();
         targetCon.SetDefault(context.useSkill);
+
+        SkillManagerData skillData = GetData.skillM_Data.Invoke();
+        skillData.setSkillList[skillData.nowSelectedHero].nowSelectedContext = targetCon;
 
         SkillManager.manager.SetTargetContext(targetCon);
 

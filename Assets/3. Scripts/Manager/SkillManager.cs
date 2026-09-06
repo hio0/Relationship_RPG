@@ -7,13 +7,11 @@ public class TargetContext
 {
     public List<Character> targets;
     public SkillData useSkill;
-    public bool selected;
 
     public void SetDefault(SkillData skill)
     {
         targets = null;
         useSkill = skill;
-        selected = false;
     }
 }
 
@@ -21,14 +19,28 @@ public class SetSkillContext
 {
     public Character performer;
     public List<TargetContext> targetContexts;
+    public TargetContext nowSelectedContext;
 }
 
 public class SkillManagerData
 {
-    public List<SetSkillContext> setSkillList { get; set; } = new();
+    public List<SetSkillContext> setSkillList = new();
     public int nowSelectedHero { get; internal set; }
 
     public TargetContext lasetTargetContext { get; internal set; }
+
+    public SetSkillContext FindCharactersContext(Character character)
+    {
+        for (int i = 0; i < setSkillList.Count; i++)
+        {
+            if (setSkillList[i].performer.id == character.id)
+            {
+                return setSkillList[i];
+            }
+        }
+
+        return null;
+    }
 }
 
 public class SkillManager : Manager_DataGiving<SkillManager, SkillManagerData>
@@ -153,8 +165,6 @@ public class SkillManager : Manager_DataGiving<SkillManager, SkillManagerData>
             if (contexts[i].useSkill == context.useSkill)
             {
                 contexts[i].targets = context.targets;
-                contexts[i].selected = context.selected;
-
                 managerData.lasetTargetContext = contexts[i];
                 break;
             }

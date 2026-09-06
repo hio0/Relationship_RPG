@@ -51,10 +51,10 @@ public class CharacterFight : CharacterComponent
 
         TargetContext context = new TargetContext
         {
-            selected = true,
             useSkill = data.useSkill,
             targets = list
         };
+
         SkillManager.manager.SetTargetContext(context);
     }
 }

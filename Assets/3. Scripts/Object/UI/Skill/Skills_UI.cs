@@ -38,7 +38,7 @@ public class Skills_UI : ParentUI
                 SkillIcon_UI icon = Instantiate(pre_skillIcon, transform);
                 icon.Initialize(data.setSkillList[data.nowSelectedHero].targetContexts[i], 0.5f);
 
-                if (data.setSkillList[data.nowSelectedHero].targetContexts[i].selected)
+                if (data.setSkillList[data.nowSelectedHero].nowSelectedContext == data.setSkillList[data.nowSelectedHero].targetContexts[i])
                 {
                     firstSet = false;
                 }

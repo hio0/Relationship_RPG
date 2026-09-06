@@ -12,9 +12,8 @@ public class ActBg_UI : MonoBehaviour
     float targetPos;
     float rotation;
     [SerializeField] RectTransform rect;
-    [SerializeField] float moveSpeed;
     
-    public void Initialize(Color32 col, bool isOur)
+    public void Initialize(Character character, Color32 col, bool isOur)
     {
         bg.color = col;
         bgLine.color = col;
@@ -45,6 +44,6 @@ public class ActBg_UI : MonoBehaviour
 
     void Move()
     {
-
+        Movement.DoAnchorMove(rect, new Vector2(targetPos, rect.anchoredPosition.y), MainData.characterSkill_moveSpeed);
     }
 }
