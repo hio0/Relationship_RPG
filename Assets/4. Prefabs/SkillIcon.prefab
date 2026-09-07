@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1435528934859826271}
   - component: {fileID: 5531196773096548016}
-  - component: {fileID: 2883591900058826061}
   - component: {fileID: 9003362109153437962}
   m_Layer: 5
   m_Name: SkillIcon
@@ -47,28 +46,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2208517394811530316}
   m_CullTransparentMesh: 1
---- !u!114 &2883591900058826061
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2208517394811530316}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea914225585ff914da93e36f578a03f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rect: {fileID: 744065725122197135}
-  can: {fileID: 9003362109153437962}
-  bg: {fileID: 0}
-  skillNameT: {fileID: 4587252573137960793}
-  normalCol:
-    serializedVersion: 2
-    rgba: 4278190080
-  selectCol:
-    serializedVersion: 2
-    rgba: 4280756082
 --- !u!225 &9003362109153437962
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -354,7 +331,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2883591900058826061}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: SkillIcon_UI, Assembly-CSharp
           m_MethodName: OnEnter
           m_Mode: 1
@@ -370,7 +347,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2883591900058826061}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: SkillIcon_UI, Assembly-CSharp
           m_MethodName: OnExit
           m_Mode: 1
@@ -386,7 +363,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 2883591900058826061}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: SkillIcon_UI, Assembly-CSharp
           m_MethodName: OnClick
           m_Mode: 1

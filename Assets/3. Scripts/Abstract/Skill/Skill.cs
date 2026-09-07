@@ -3,18 +3,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class Skill : MonoBehaviour
+public class SkillContext
 {
-    // Start is called before the first frame update
-    void Start()
+    public Character performer;
+    public List<Character> targets = new();
+    public SkillData skillData;
+}
+
+[Serializable]
+public abstract class Skill
+{
+    protected SkillContext data = new();
+
+    public virtual void Initialize(SkillContext context)
     {
-        
+        data = context;
     }
 
-    // Update is called once per frame
-    void Update()
+    public virtual void Use()
     {
-        
+        foreach(Character target in data.targets)
+        {
+            bool hit = data.skillData.CheckHit(target);
+
+            if(hit)
+            {
+                target.Damaged(data.skillData.SetDamage());
+            }
+        }
     }
 }

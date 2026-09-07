@@ -6,31 +6,37 @@ using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class SkillIcon_Act : SkillIconUI
 {
-    public override void Initialize(TargetContext context, float duration)
+    public override void Initialize(SkillData skill, float duration)
     {
-        base.Initialize(context, duration);
-        SkillManager.manager.OnSkillSelected += SetSelect;
+        base.Initialize(skill, duration);
+        data.OnSelect += SetBlock;
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
-        SkillManager.manager.OnSkillSelected -= SetBlock;
+        data.OnSelect -= SetBlock;
     }
 
     void SetBlock()
     {
         SkillManagerData data = GetData.skillM_Data.Invoke();
 
-        if (data.lasetTargetContext.useSkill.skillType == SkillData.SkillType.Act && context.useSkill.skillType == SkillData.SkillType.Act)
+        if (data.setSkillList[data.nowSelectedHero].nowSelectedActSkill.useSkill != this.data.mySkill)
         {
             SetDefault();
         }
     }
 
+    protected override void SetDefault()
+    {
+        base.SetDefault();
+        SkillManagerData data = GetData.skillM_Data.Invoke();
+        data.setSkillList[data.nowSelectedHero].nowSelectedActSkill = null;
+    }
+
     protected override void SkillSet()
     {
-        GetData.nowSelectedSkill += GiveData;
         SkillManager.manager.OnSkillFind?.Invoke();
     }
 }

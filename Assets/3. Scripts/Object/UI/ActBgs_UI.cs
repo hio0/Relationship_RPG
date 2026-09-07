@@ -22,9 +22,9 @@ public class ActBgs_UI : ActObjectUI
     {
         CombatManagerData data = GetData.combatM_Data.Invoke();
 
-        for (int i = 0; i < data.nowSkillActs[data.nowActNum].Value.targets.Count; i++)
+        for (int i = 0; i < data.actList[data.nowActNum].Value.targets.Count; i++)
         {
-            MakeActChar(data.nowSkillActs[data.nowActNum].Value.targets[i]);
+            MakeActChar(data.actList[data.nowActNum].Value.targets[i]);
         }
     }
 
@@ -40,6 +40,6 @@ public class ActBgs_UI : ActObjectUI
         bool isHero = SetTeam(character);
 
         ActBg_UI act = Instantiate(pre_actBg, SetRange(isHero));
-        act.Initialize(character, data.nowSkillActs[data.nowActNum].Value.useSkill.skillBgColor, isHero);
+        act.Initialize(character, data.actList[data.nowActNum].Value.useSkill.skillBgColor, isHero);
     }
 }

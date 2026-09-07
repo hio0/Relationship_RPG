@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using UnityEngine;
 
 public class Skills_UI : ParentUI
 {
-    [SerializeField] SkillIcon_UI pre_skillIcon;
+    [SerializeField] SkillIcon_Act pre_actIcon;
+    [SerializeField] SkillIcon_ReAct pre_reactIcon;
 
     // Start is called before the first frame update
     private void OnEnable()
@@ -31,27 +33,32 @@ public class Skills_UI : ParentUI
             DestroyAllChild();
 
             SkillManagerData data = GetData.skillM_Data.Invoke();
-            bool firstSet = true;
 
-            for (int i = 0; i < data.setSkillList[data.nowSelectedHero].targetContexts.Count; i++)
+            for (int i = 0; i < data.setSkillList[data.nowSelectedHero].drawSkillList.Count; i++)
             {
-                SkillIcon_UI icon = Instantiate(pre_skillIcon, transform);
-                icon.Initialize(data.setSkillList[data.nowSelectedHero].targetContexts[i], 0.5f);
+                SkillIconUI icon = null;
+                SkillData nowSkill = data.setSkillList[data.nowSelectedHero].drawSkillList[i];
 
-                if (data.setSkillList[data.nowSelectedHero].nowSelectedContext == data.setSkillList[data.nowSelectedHero].targetContexts[i])
+                if (nowSkill.skillType == SkillData.SkillType.Act)
                 {
-                    firstSet = false;
+                    icon = pre_actIcon;
                 }
+                else
+                {
+                    icon = pre_reactIcon;
+                }
+
+                SkillIconUI skillIcon = Instantiate(icon, transform);
+                skillIcon.Initialize(nowSkill, 0.5f);
 
                 yield return null;
             }
 
-            
             for (int i = 0; i < transform.childCount; i++)
             {
-                SkillIcon_UI icon = transform.GetChild(i).GetComponent<SkillIcon_UI>();
+                SkillIconUI icon = transform.GetChild(i).GetComponent<SkillIconUI>();
 
-                if(firstSet)
+                if(!data.setSkillList[data.nowSelectedHero].almostSet)
                 {
                     icon.FirstSetMove();
 
@@ -64,7 +71,11 @@ public class Skills_UI : ParentUI
                     yield return null;
                 }
             }
-            
+
+            if (!data.setSkillList[data.nowSelectedHero].almostSet)
+            {
+                data.setSkillList[data.nowSelectedHero].almostSet = true;
+            }
         }
 
         StopAllCoroutines();

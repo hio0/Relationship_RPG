@@ -11,9 +11,6 @@ public class FightManager : Manager<FightManager>
     public event Action OnOurTurnStart;
     public event Action OnEnemyTurnStart;
 
-    public event Action OnActStart;
-    public event Action OnActFinish;
-
     public event Action OnTurnFinish;
     public event Action OnFightFInish;
 

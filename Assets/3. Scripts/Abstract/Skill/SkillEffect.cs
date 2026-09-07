@@ -3,13 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillContext
-{
-    public Character performer;
-    public List<Character> targets = new();
-    public SkillData skillData;
-}
-
 [Serializable]
 public abstract class SkillEffect
 {

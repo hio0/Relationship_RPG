@@ -39,7 +39,7 @@ public class SkillExplanation_UI : MonoBehaviour
         textCan.alpha = 1f;
         Movement.DOFade(textCan, 1f, 0.5f);
 
-        SkillData skill = GetData.nowSelectedSkill.Invoke().useSkill;
+        SkillData skill = GetData.nowSelectedSkill.Invoke().mySkill;
 
         skillNameT.text = skill.skillID;
         explanationT.text = skill.skillExplanation;

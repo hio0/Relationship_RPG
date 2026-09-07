@@ -6,10 +6,14 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public abstract class SkillIconUI : MonoBehaviour
+public class SkillIconData
 {
-    protected TargetContext context;
+    public SkillData mySkill;
+    public Action OnSelect;
+}
 
+public abstract class SkillIconUI : GiveDataClass<SkillIconData>
+{
     [SerializeField] RectTransform rect;
     [SerializeField] CanvasGroup can;
 
@@ -19,37 +23,36 @@ public abstract class SkillIconUI : MonoBehaviour
     [SerializeField] Color32 normalCol;
     [SerializeField] Color32 selectCol;
 
+    [SerializeField] float defaultPos;
+    [SerializeField] float startPos;
+    [SerializeField] float selectedPos;
+
     protected bool isclick;
     protected static Action OnClicked;
 
     protected float animationSpeed;
 
-    public virtual void Initialize(TargetContext context, float duration)
+    public virtual void Initialize(SkillData skill, float duration)
     {
-        this.context = context;
+        data.mySkill = skill;
         animationSpeed = duration;
 
+        data.OnSelect += SetSelect;
         OnClicked += RemoveEvent;
-        SkillManager.manager.OnSkillSelected += SetSelect;
 
-        ContextSet();
+        IconSet();
         can.alpha = 0;
     }
 
     protected virtual void OnDisable()
     {
+        data.OnSelect -= SetSelect;
         OnClicked -= RemoveEvent;
-        SkillManager.manager.OnSkillSelected -= SetSelect;
     }
 
-    protected TargetContext GiveData()
+    void IconSet()
     {
-        return context;
-    }
-
-    void ContextSet()
-    {
-        skillNameT.text = context.useSkill.skillID;
+        skillNameT.text = data.mySkill.skillID;
 
         SetSelect();
     }
@@ -61,8 +64,8 @@ public abstract class SkillIconUI : MonoBehaviour
 
     public void FirstSetMove()
     {
-        ResetPos();
-        MoveAside();
+        rect.anchoredPosition = new Vector2(300f, rect.anchoredPosition.y);
+        MoveTo(defaultPos);
         Movement.DOFade(can, 1f, animationSpeed);
     }
 
@@ -70,7 +73,7 @@ public abstract class SkillIconUI : MonoBehaviour
     {
         SkillManagerData skillData = GetData.skillM_Data.Invoke();
 
-        if (skillData.setSkillList[skillData.nowSelectedHero].nowSelectedContext == context)
+        if (skillData.setSkillList[skillData.nowSelectedHero].nowSelectedActSkill.useSkill == data.mySkill)
         {
             rect.anchoredPosition = new Vector2(-50f, rect.anchoredPosition.y);
         }
@@ -78,25 +81,21 @@ public abstract class SkillIconUI : MonoBehaviour
         {
             rect.anchoredPosition = Vector2.zero;
         }
-
-        SetSelect();
     }
 
-    void MoveAside()
+    void MoveTo(float posX)
     {
-        Vector2 targetPos = Vector2.zero;
-
-        Movement.DoAnchorMove(rect, targetPos, animationSpeed);
+        Movement.DoAnchorMove(rect, new Vector2(posX, rect.anchoredPosition.y), animationSpeed);
     }
 
-    void ResetPos()
+    void SetColor(Color32 color)
     {
-        rect.anchoredPosition = new Vector2(300f, rect.anchoredPosition.y);
+        bg.color = color;
     }
 
     public void OnEnter()
     {
-        Movement.DoAnchorMove(rect, new Vector2(-50f, rect.anchoredPosition.y), animationSpeed);
+        MoveTo(selectedPos);
     }
 
     public void OnClick()
@@ -107,6 +106,7 @@ public abstract class SkillIconUI : MonoBehaviour
         {
             isclick = true;
 
+            GetData.nowSelectedSkill += GiveData;
             SkillSet();
         }
         else
@@ -117,41 +117,21 @@ public abstract class SkillIconUI : MonoBehaviour
 
     protected abstract void SkillSet();
 
-    void SetColor(Color32 color)
+    void SetSelect()
     {
-        bg.color = color;
-    } 
+        isclick = true;
 
-    protected void SetSelect()
-    {
-        SkillManagerData skillData = GetData.skillM_Data.Invoke();
-
-        if (skillData.setSkillList[skillData.nowSelectedHero].nowSelectedContext == context)
-        {
-            isclick = true;
-
-            OnEnter();
-            SetColor(selectCol);
-        }
-        else
-        {
-            return;
-        }
+        OnEnter();
+        SetColor(selectCol);
     }
 
-    protected void SetDefault()
+    protected virtual void SetDefault()
     {
-        TargetContext targetCon = new TargetContext();
-        targetCon.SetDefault(context.useSkill);
-
         SkillManagerData skillData = GetData.skillM_Data.Invoke();
-        skillData.setSkillList[skillData.nowSelectedHero].nowSelectedContext = targetCon;
-
-        SkillManager.manager.SetTargetContext(targetCon);
 
         isclick = false;
 
-        rect.anchoredPosition = Vector2.zero;
+        MoveTo(defaultPos);
         SetColor(normalCol);
     }
 
@@ -159,7 +139,7 @@ public abstract class SkillIconUI : MonoBehaviour
     {
         if (!isclick)
         {
-            MoveAside();
+            MoveTo(defaultPos);
         }
     }
 }

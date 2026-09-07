@@ -28,6 +28,8 @@ public abstract class Character : MonoBehaviour
     public Image sprite;
     public CharacterEventTrigger trigger;
 
+    public event Action OnDamaged;
+
     public abstract void Initialize(CharacterData data);
 
     // Start is called before the first frame update
@@ -57,5 +59,12 @@ public abstract class Character : MonoBehaviour
     public void SetSpeed()
     {
         speed = UnityEngine.Random.Range(minSpeed, maxSpeed + 1);
+    }
+
+    // 전투
+    public void Damaged(int damage)
+    {
+        OnDamaged?.Invoke();
+        hp -= damage;
     }
 }

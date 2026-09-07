@@ -8,28 +8,23 @@ public class ActChar_UI : MoveUI
     [SerializeField] Character myChar;
     [SerializeField] Image characterImage;
 
-    bool isMoved;
-    
-    public void Initialize(Character character, bool isMoved)
+    public void Initialize(Character character, float targetPos)
     {
         myChar = character;
-        this.isMoved = isMoved;
+        openPos = new Vector2(targetPos, rect.anchoredPosition.y);
+
+        Move();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        CombatManager.manager.OnSetNextAct += CanActSet;
+        CombatManager.manager.OnSetNextAct += Move;
     }
 
     private void OnDisable()
     {
-        CombatManager.manager.OnSetNextAct -= CanActSet;
-    }
-
-    void CanActSet()
-    {
-
+        CombatManager.manager.OnSetNextAct -= Move;
     }
 
     void SetImage()
@@ -42,10 +37,11 @@ public class ActChar_UI : MoveUI
     protected override void Move()
     {
         Movement.DoAnchorMove(rect, openPos, MainData.characterSkill_moveSpeed);
+        SetImage();
     }
 
     protected override void ResetPos()
     {
-        rect.anchoredPosition = closePos;     
+        rect.anchoredPosition = closePos;
     }
 }

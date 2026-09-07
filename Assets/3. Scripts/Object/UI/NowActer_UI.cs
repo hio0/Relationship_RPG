@@ -11,12 +11,12 @@ public class NowActer_UI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        RangeManager.manager.OnSelectedChar += SetText;
+        CombatManager.manager.OnSelectedChar += SetText;
     }
 
     private void OnDisable()
     {
-        RangeManager.manager.OnSelectedChar -= SetText;
+        CombatManager.manager.OnSelectedChar -= SetText;
     }
 
     // Update is called once per frame
@@ -32,7 +32,7 @@ public class NowActer_UI : MonoBehaviour
             can.alpha = 1f;
             SkillManagerData skillData = GetData.skillM_Data.Invoke();
 
-            actT.text = $"{character.characterName}의 {skillData.FindCharactersContext(character).nowSelectedContext.useSkill.skillID}";
+            actT.text = $"{character.characterName}의 {skillData.FindCharactersContext(character).nowSelectedActSkill.useSkill.skillID}";
 
             yield return new WaitForSeconds(1.5f);
             

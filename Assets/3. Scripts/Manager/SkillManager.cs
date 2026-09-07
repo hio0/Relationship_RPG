@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
 
-public class TargetContext
+public class ActSkillContext
 {
-    public List<Character> targets;
     public SkillData useSkill;
+    public List<Character> targets;
 
     public void SetDefault(SkillData skill)
     {
@@ -17,17 +17,26 @@ public class TargetContext
 
 public class SetSkillContext
 {
-    public Character performer;
-    public List<TargetContext> targetContexts;
-    public TargetContext nowSelectedContext;
+    public Character performer { get; internal set; }
+    public CharacterFight perfomerFight { get; internal set; }
+    public List<SkillData> drawSkillList { get; internal set; } = new();
+
+    public ActSkillContext nowSelectedActSkill { get; set; }
+
+    public bool almostSet;
+
+    public void SetDefault()
+    {
+        nowSelectedActSkill = null;
+
+        almostSet = false;
+    }
 }
 
 public class SkillManagerData
 {
     public List<SetSkillContext> setSkillList = new();
     public int nowSelectedHero { get; internal set; }
-
-    public TargetContext lasetTargetContext { get; internal set; }
 
     public SetSkillContext FindCharactersContext(Character character)
     {
@@ -47,18 +56,18 @@ public class SkillManager : Manager_DataGiving<SkillManager, SkillManagerData>
 {
     public event Action OnActerSelected;
     public Action OnSkillFind;
-    public event Action OnSkillSelected;
+    public Action OnSkillSelected;
 
     private void OnEnable()
     {
         GetData.skillM_Data += GiveData;
-        RangeManager.manager.OnActingCharSelected += SetUsingSkill;
+        CombatManager.manager.OnActingCharSelected += SetUsingSkill;
     }
 
     private void OnDisable()
     {
         GetData.skillM_Data -= GiveData;
-        RangeManager.manager.OnActingCharSelected -= SetUsingSkill;
+        CombatManager.manager.OnActingCharSelected -= SetUsingSkill;
     }
 
     void SetKey()
@@ -91,7 +100,7 @@ public class SkillManager : Manager_DataGiving<SkillManager, SkillManagerData>
     {
         List<int> usedIndex = new();
         List<SkillData> skillDatas = new();
-        List<TargetContext> contextList = new();
+        List<ActSkillContext> contextList = new();
 
         int drawCount = 3;
         if(character.skillList.Count < 3)
@@ -115,7 +124,7 @@ public class SkillManager : Manager_DataGiving<SkillManager, SkillManagerData>
 
         for (int i = 0; i < skillDatas.Count; i++)
         {
-            TargetContext context = new TargetContext();
+            ActSkillContext context = new ActSkillContext();
             context.SetDefault(skillDatas[i]);
 
             contextList.Add(context);
@@ -124,8 +133,11 @@ public class SkillManager : Manager_DataGiving<SkillManager, SkillManagerData>
         SetSkillContext setSkill = new SetSkillContext
         {
             performer = character,
-            targetContexts = contextList
+            perfomerFight = character.gameObject.GetComponent<CharacterFight>(),
+            drawSkillList = skillDatas,
         };
+        setSkill.SetDefault();
+
         managerData.setSkillList.Add(setSkill);
     }
 
@@ -154,25 +166,5 @@ public class SkillManager : Manager_DataGiving<SkillManager, SkillManagerData>
         }
 
         ActSelect();
-    }
-
-    public void SetTargetContext(TargetContext context)
-    {
-        List<TargetContext> contexts = managerData.setSkillList[managerData.nowSelectedHero].targetContexts;
-
-        for (int i = 0; i < contexts.Count; i++)
-        {
-            if (contexts[i].useSkill == context.useSkill)
-            {
-                contexts[i].targets = context.targets;
-                managerData.lasetTargetContext = contexts[i];
-                break;
-            }
-        }
-
-        OnSkillSelected?.Invoke();
-        managerData.lasetTargetContext = null;
-
-        NextHero();
     }
 }

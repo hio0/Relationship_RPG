@@ -7,17 +7,26 @@ using UnityEngine;
 /// </summary>
 public class CharacterFight : CharacterComponent
 {
+    public List<SkillData_ReAct> reActList = new();
+    public List<SkillData_ReAct> selectedReActList = new();
+
     private void OnEnable()
     {
         BeforeSetting();
-        RangeManager.manager.OnActerFind += SetActing;
+        CombatManager.manager.OnActerFind += SetActing;
         SkillManager.manager.OnSkillFind += EventSet_Targeted;
+
+        CombatManager.manager.OnActStart += ReActSet;
+        CombatManager.manager.OnActFinish += ResetAct;
     }
 
     private void OnDisable()
     {
-        RangeManager.manager.OnActerFind -= SetActing;
+        CombatManager.manager.OnActerFind -= SetActing;
         SkillManager.manager.OnSkillFind -= EventSet_Targeted;
+
+        CombatManager.manager.OnActStart -= ReActSet;
+        CombatManager.manager.OnActFinish -= ResetAct;
     }
 
     // Update is called once per frame
@@ -44,17 +53,41 @@ public class CharacterFight : CharacterComponent
 
     void Targeted()
     {
-        TargetContext data = GetData.nowSelectedSkill.Invoke();
+        SkillManagerData data = GetData.skillM_Data.Invoke();
+        SkillIconData targetedSkill = GetData.nowSelectedSkill.Invoke();
 
         List<Character> list = new();
         list.Add(myChar);
 
-        TargetContext context = new TargetContext
+        ActSkillContext context = new ActSkillContext
         {
-            useSkill = data.useSkill,
-            targets = list
+            targets = list,
+            useSkill = targetedSkill.mySkill
         };
 
-        SkillManager.manager.SetTargetContext(context);
+        data.setSkillList[data.nowSelectedHero].nowSelectedActSkill = context;
+        targetedSkill.OnSelect.Invoke();
+    }
+
+    void ReActSet()
+    {
+        for (int i = 0; i < reActList.Count; i++)
+        {
+            Skill_ReAct skill = new();
+
+            SkillContext context = new SkillContext
+            {
+                performer = myChar,
+                skillData = reActList[i]
+            };
+
+            skill.Initialize(context);
+        }
+    }
+
+    void ResetAct()
+    {
+        reActList.Clear();
+        selectedReActList.Clear();
     }
 }

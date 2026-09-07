@@ -57,4 +57,37 @@ public abstract class ActObjectUI : MonoBehaviour
 
         return parent;
     }
+
+    protected virtual float SetPos(bool isHero, float pos)
+    {
+        float targetPos = 0;
+
+        if (isHero)
+        {
+            targetPos = -pos;
+        }
+        else
+        {
+            targetPos = pos;
+        }
+
+        return targetPos;
+    }
+
+    protected void SetAlsoChar(Character character)
+    {
+        CombatManagerData data = GetData.combatM_Data.Invoke();
+        List<Character> list = new List<Character>();
+
+        if(SetTeam(character))
+        {
+            list = data.alsoSettingActers;
+        }
+        else
+        {
+            list = data.alsoSettingTargets;
+        }
+
+        list.Add(character);
+    }
 }

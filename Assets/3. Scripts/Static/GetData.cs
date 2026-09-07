@@ -12,5 +12,5 @@ public static class GetData
     public static Func<SkillManagerData> skillM_Data;
     public static Func<CombatManagerData> combatM_Data;
 
-    public static Func<TargetContext> nowSelectedSkill;
+    public static Func<SkillIconData> nowSelectedSkill;
 }
